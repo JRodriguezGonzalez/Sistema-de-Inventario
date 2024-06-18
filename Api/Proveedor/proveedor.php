@@ -45,16 +45,30 @@ function obtenerProveedores() {
     $stmt->execute();
     $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode($items);
+
+    
 }
 
 function obtenerProveedor($id) {
     global $db;
-    $query = "SELECT * FROM Proveedores_JRYF WHERE id = ? AND estado = 'activo'";
+    $query = "SELECT * FROM Proveedores_JRYF WHERE id = ?  ";
     $stmt = $db->prepare($query);
     $stmt->bindParam(1, $id);
     $stmt->execute();
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
-    echo json_encode($item);
+
+    $query = "SELECT estado FROM Proveedores_JRYF WHERE id = ?";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(1, $id);
+    $stmt->execute();
+    $estado = $stmt->fetchColumn();
+    
+    if($estado == "activo"){
+        echo json_encode($item);
+    }
+    else{
+        echo ("El proveedor no existe");
+    }
 }
 
 function crearProveedor() {

@@ -43,6 +43,8 @@ function obtenerUsuarios() {
     $query = "SELECT * FROM Usuarios_JRYF";
     $stmt = $db->prepare($query);
     $stmt->execute();
+    //$items = `{"code":200,"message":"Usuarios Lista","data":[ $stmt->fetch(PDO::FETCH_ASSOC) ]}`;
+    //$items = `{"code":200,"message":"Usuarios Lista","data":[{"id":"684","name":"ABC","email":"abc123@gmail.com","password":"900150983cd24fb0d6963f7d28e17f72"} ]}`;
     $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode($items);
 }
@@ -54,8 +56,22 @@ function obtenerUsuario($id) {
     $stmt->bindParam(1, $id);
     $stmt->execute();
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
-    echo json_encode($item);
+
+    $query = "SELECT estado FROM Usuarios_JRYF WHERE id = ?";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(1, $id);
+    $stmt->execute();
+    $estado = $stmt->fetchColumn();
+    
+    if($estado == "activo"){
+        echo json_encode($item);
+    }
+    else{
+        echo ("El Usuario no existe");
+    }
 }
+
+
 
 function crearUsuario() {
     global $db;
@@ -93,10 +109,11 @@ function actualizarUsuario() {
         return;
     }
 
-    $query = "UPDATE Usuarios_JRYF SET nombre = :nombre, email = :email WHERE id = :id AND estado = 'activo'";
+    $query = "UPDATE Usuarios_JRYF SET nombre = :nombre, email = :email, password = :password WHERE id = :id AND estado = 'activo'";
     $stmt = $db->prepare($query);
     $stmt->bindParam(":nombre", $data->nombre);
     $stmt->bindParam(":email", $data->email);
+    $stmt->bindParam(":password", $data->password);
     $stmt->bindParam(":id", $data->id);
 
     if ($stmt->execute()) {

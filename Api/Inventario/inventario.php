@@ -15,19 +15,19 @@ $request_method = $_SERVER["REQUEST_METHOD"];
 
 switch ($request_method) {
     case 'POST':
-        crearProducto();
+        crearInventario();
         break;
     case 'PUT':
-        actualizarProducto();
+        actualizarInventario();
         break;
     case 'GET':
-        isset($_GET["id"]) ? obtenerProducto(intval($_GET["id"])) : obtenerProductos();
+        isset($_GET["id"]) ? obtenerInventario(intval($_GET["id"])) : obtenerInventarios();
         break;
     case 'DELETE':
-        inactivarProducto();
+        inactivarInventario();
         break;
     case 'PATCH':
-        activarProducto();
+        activarInventario();
         break;
     case 'OPTIONS':
         http_response_code(200);
@@ -38,103 +38,101 @@ switch ($request_method) {
         break;
 }
 
-function obtenerProductos() {
+function obtenerInventarios() {
     global $db;
-    $query = "SELECT * FROM Productos_JRYF";
+    $query = "SELECT * FROM Inventario_JRYF";
     $stmt = $db->prepare($query);
     $stmt->execute();
     $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode($items);
 }
 
-function obtenerProducto($id) {
+function obtenerInventario($id) {
     global $db;
-    $query = "SELECT * FROM Productos_JRYF WHERE id = ? AND estado = 'disponible'";
+    $query = "SELECT * FROM Inventario_JRYF WHERE id = ? AND estado = 'disponible'";
     $stmt = $db->prepare($query);
     $stmt->bindParam(1, $id);
     $stmt->execute();
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    $query = "SELECT estado FROM Productos_JRYF WHERE id = ?";
+    $query = "SELECT estado FROM Inventario_JRYF WHERE id = ?";
     $stmt = $db->prepare($query);
     $stmt->bindParam(1, $id);
     $stmt->execute();
     $estado = $stmt->fetchColumn();
     
-    if($estado == "activo"){
+    if($estado == "disponible"){
         echo json_encode($item);
     }
     else{
-        echo ("El producto no existe");
+        echo ("El inventario no existe");
     }
 }
 
-function crearProducto() {
+function crearInventario() {
     global $db;
     $data = json_decode(file_get_contents("php://input"));
 
-    if (empty($data->nombre) || empty($data->descripcion) || empty($data->precio) || empty($data->idCategoria)) {
+    if (empty($data->idProducto) || empty($data->cantidad) || empty($data->fechaRegistro) || empty($data->idUsuario)) {
         http_response_code(400);
         echo json_encode(array("mensaje" => "Faltan datos para crear el producto."));
         return;
     }
 
-    $query = "INSERT INTO Productos_JRYF (nombre, descripcion, precio, idCategoria, proveedor_id, estado) VALUES (:nombre, :descripcion, :precio, :idCategoria, :proveedor_id, 'disponible')";
+    $query = "INSERT INTO Inventario_JRYF (idProducto, cantidad, fechaRegistro, idUsuario , estado) VALUES (:idProducto, :cantidad, :fechaRegistro, :idUsuario, 'disponible')";
     $stmt = $db->prepare($query);
-    $stmt->bindParam(":nombre", $data->nombre);
-    $stmt->bindParam(":descripcion", $data->descripcion);
-    $stmt->bindParam(":precio", $data->precio);
-    $stmt->bindParam(":idCategoria", $data->idCategoria);
-    $stmt->bindParam(":proveedor_id", $data->proveedor_id);
+    $stmt->bindParam(":idProducto", $data->idProducto);
+    $stmt->bindParam(":cantidad", $data->cantidad);
+    $stmt->bindParam(":fechaRegistro", $data->fechaRegistro);
+    $stmt->bindParam(":idUsuario", $data->idUsuario);
 
     if ($stmt->execute()) {
         http_response_code(200);
-        echo json_encode(array("mensaje" => "Producto creado."));
+        echo json_encode(array("mensaje" => "Inventario creado."));
     } else {
         http_response_code(500);
-        echo json_encode(array("mensaje" => "No se pudo crear el producto."));
+        echo json_encode(array("mensaje" => "No se pudo crear el Inventario."));
     }
 }
 
-function actualizarProducto() {
+function actualizarInventario() {
     global $db;
     $data = json_decode(file_get_contents("php://input"));
 
-    if (empty($data->id) || empty($data->nombre) || empty($data->descripcion) || empty($data->precio) || empty($data->idCategoria)) {
+    if (empty($data->id) || empty($data->idProducto) || empty($data->cantidad) || empty($data->fechaRegistro) || empty($data->idUsuario)) {
         http_response_code(400);
-        echo json_encode(array("mensaje" => "Faltan datos para actualizar el producto."));
+        echo json_encode(array("mensaje" => "Faltan datos para actualizar el Inventario."));
         return;
     }
 
-    $query = "UPDATE Productos_JRYF SET nombre = :nombre, descripcion = :descripcion, precio = :precio, idCategoria = :idCategoria, proveedor_id = :proveedor_id WHERE id = :id AND estado = 'disponible'";
+    $query = "UPDATE Inventario_JRYF SET idProducto = :idProducto, cantidad = :cantidad, fechaRegistro = :fechaRegistro, idUsuario = :idUsuario WHERE id = :id AND estado = 'disponible'";
     $stmt = $db->prepare($query);
-    $stmt->bindParam(":nombre", $data->nombre);
-    $stmt->bindParam(":descripcion", $data->descripcion);
-    $stmt->bindParam(":precio", $data->precio);
-    $stmt->bindParam(":idCategoria", $data->idCategoria);
-    $stmt->bindParam(":proveedor_id", $data->proveedor_id);
+    $stmt->bindParam(":idProducto", $data->idProducto);
+    $stmt->bindParam(":cantidad", $data->cantidad);
+    $stmt->bindParam(":fechaRegistro", $data->fechaRegistro);
+    $stmt->bindParam(":idUsuario", $data->idUsuario);
     $stmt->bindParam(":id", $data->id);
 
     if ($stmt->execute()) {
         http_response_code(200);
-        echo json_encode(array("mensaje" => "Producto actualizado."));
+        echo json_encode(array("mensaje" => "Inventario actualizado."));
     } else {
         http_response_code(500);
-        echo json_encode(array("mensaje" => "No se pudo actualizar el producto."));
+        echo json_encode(array("mensaje" => "No se pudo actualizar el Inventario."));
     }
 }
 
-function inactivarProducto() {
+function inactivarInventario() {
     global $db;
     $data = json_decode(file_get_contents("php://input"));
 
     if (empty($data->id)) {
         http_response_code(400);
-        echo json_encode(array("mensaje" => "Falta el ID para inactivar el producto."));
+        echo json_encode(array("mensaje" => "Falta el ID para inactivar el Inventario."));
         return;
     }
 
-    $query = "UPDATE Productos_JRYF SET estado = 'no disponible' WHERE id = :id";
+    $query = "UPDATE Inventario_JRYF SET estado = 'no disponible' WHERE id = :id";
     $stmt = $db->prepare($query);
     $stmt->bindParam(":id", $data->id);
 
@@ -143,30 +141,30 @@ function inactivarProducto() {
         echo json_encode(array("mensaje" => "Producto inactivado."));
     } else {
         http_response_code(500);
-        echo json_encode(array("mensaje" => "No se pudo inactivar el producto."));
+        echo json_encode(array("mensaje" => "No se pudo inactivar el Inventario."));
     }
 }
 
-function activarProducto() {
+function activarInventario() {
     global $db;
     $data = json_decode(file_get_contents("php://input"));
 
     if (empty($data->id)) {
         http_response_code(400);
-        echo json_encode(array("mensaje" => "Falta el ID para activar el producto."));
+        echo json_encode(array("mensaje" => "Falta el ID para activar el Inventario."));
         return;
     }
 
-    $query = "UPDATE Productos_JRYF SET estado = 'disponible' WHERE id = :id";
+    $query = "UPDATE Inventario_JRYF SET estado = 'disponible' WHERE id = :id";
     $stmt = $db->prepare($query);
     $stmt->bindParam(":id", $data->id);
 
     if ($stmt->execute()) {
         http_response_code(200);
-        echo json_encode(array("mensaje" => "Producto activado."));
+        echo json_encode(array("mensaje" => "Inventario activado."));
     } else {
         http_response_code(500);
-        echo json_encode(array("mensaje" => "No se pudo activar el producto."));
+        echo json_encode(array("mensaje" => "No se pudo activar el Inventario."));
     }
 }
 ?>
