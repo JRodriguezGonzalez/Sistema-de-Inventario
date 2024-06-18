@@ -79,7 +79,7 @@ function crearProducto() {
         return;
     }
 
-    $query = "INSERT INTO Productos_JRYF (nombre, descripcion, precio, idCategoria, proveedor_id, estado) VALUES (:nombre, :descripcion, :precio, :idCategoria, :proveedor_id, 'disponible')";
+    $query = "INSERT INTO Productos_JRYF (nombre, descripcion, precio, idCategoria, proveedor_id, estado) VALUES (:nombre, :descripcion, :precio, :idCategoria, :proveedor_id, 'activo')";
     $stmt = $db->prepare($query);
     $stmt->bindParam(":nombre", $data->nombre);
     $stmt->bindParam(":descripcion", $data->descripcion);
@@ -106,7 +106,7 @@ function actualizarProducto() {
         return;
     }
 
-    $query = "UPDATE Productos_JRYF SET nombre = :nombre, descripcion = :descripcion, precio = :precio, idCategoria = :idCategoria, proveedor_id = :proveedor_id WHERE id = :id AND estado = 'disponible'";
+    $query = "UPDATE Productos_JRYF SET nombre = :nombre, descripcion = :descripcion, precio = :precio, idCategoria = :idCategoria, proveedor_id = :proveedor_id WHERE id = :id AND estado = 'activo'";
     $stmt = $db->prepare($query);
     $stmt->bindParam(":nombre", $data->nombre);
     $stmt->bindParam(":descripcion", $data->descripcion);
@@ -134,7 +134,7 @@ function inactivarProducto() {
         return;
     }
 
-    $query = "UPDATE Productos_JRYF SET estado = 'no disponible' WHERE id = :id";
+    $query = "UPDATE Productos_JRYF SET estado = 'inactivo' WHERE id = :id";
     $stmt = $db->prepare($query);
     $stmt->bindParam(":id", $data->id);
 
@@ -157,7 +157,7 @@ function activarProducto() {
         return;
     }
 
-    $query = "UPDATE Productos_JRYF SET estado = 'disponible' WHERE id = :id";
+    $query = "UPDATE Productos_JRYF SET estado = 'activo' WHERE id = :id";
     $stmt = $db->prepare($query);
     $stmt->bindParam(":id", $data->id);
 
