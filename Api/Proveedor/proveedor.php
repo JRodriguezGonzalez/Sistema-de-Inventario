@@ -2,7 +2,7 @@
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE, PATCH, OPTIONS");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
@@ -57,19 +57,15 @@ function obtenerProveedor($id) {
     $stmt->execute();
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $query = "SELECT estado FROM Proveedores_JRYF WHERE id = ?";
-    $stmt = $db->prepare($query);
-    $stmt->bindParam(1, $id);
-    $stmt->execute();
-    $estado = $stmt->fetchColumn();
-    
-    if($estado == "activo"){
+    if($item) {
         echo json_encode($item);
+    } else {
+        http_response_code(404);
+        echo json_encode(array("mensaje" => "El proveedor no existe"));
     }
-    else{
-        echo ("El proveedor no existe");
-    }
+
 }
+
 
 function crearProveedor() {
     global $db;

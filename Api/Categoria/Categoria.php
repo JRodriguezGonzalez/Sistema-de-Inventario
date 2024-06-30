@@ -34,7 +34,7 @@ switch ($request_method) {
         break;
     default:
         http_response_code(400);
-        echo json_encode(array("mensaje" => "MÃ©todo invÃ¡lido"));
+        echo json_encode(array("mensaje" => "Método inválido"));
         break;
 }
 
@@ -49,23 +49,17 @@ function obtenerCategorias() {
 
 function obtenerCategoria($id) {
     global $db;
-    $query = "SELECT * FROM Categorias_JRYF WHERE id = ? AND estado = 'activo'";
+    $query = "SELECT * FROM Categorias_JRYF WHERE id = ?";
     $stmt = $db->prepare($query);
     $stmt->bindParam(1, $id);
     $stmt->execute();
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $query = "SELECT estado FROM Categorias_JRYF WHERE id = ?";
-    $stmt = $db->prepare($query);
-    $stmt->bindParam(1, $id);
-    $stmt->execute();
-    $estado = $stmt->fetchColumn();
-    
-    if($estado == "activo"){
+    if($item) {
         echo json_encode($item);
-    }
-    else{
-        echo ("La categoria no existe");
+    } else {
+        http_response_code(404);
+        echo json_encode(array("mensaje" => "La categoría no existe"));
     }
 }
 
@@ -75,7 +69,7 @@ function crearCategoria() {
 
     if (empty($data->nombre) || empty($data->descripcion)) {
         http_response_code(400);
-        echo json_encode(array("mensaje" => "Faltan datos para crear la categoria."));
+        echo json_encode(array("mensaje" => "Faltan datos para crear la categoría."));
         return;
     }
 
@@ -86,10 +80,10 @@ function crearCategoria() {
 
     if ($stmt->execute()) {
         http_response_code(200);
-        echo json_encode(array("mensaje" => "Categoria creada."));
+        echo json_encode(array("mensaje" => "Categoría creada."));
     } else {
         http_response_code(500);
-        echo json_encode(array("mensaje" => "No se pudo crear la categoria."));
+        echo json_encode(array("mensaje" => "No se pudo crear la categoría."));
     }
 }
 
@@ -99,11 +93,11 @@ function actualizarCategoria() {
 
     if (empty($data->id) || empty($data->nombre) || empty($data->descripcion)) {
         http_response_code(400);
-        echo json_encode(array("mensaje" => "Faltan datos para actualizar la categoria."));
+        echo json_encode(array("mensaje" => "Faltan datos para actualizar la categoría."));
         return;
     }
 
-    $query = "UPDATE Categorias_JRYF SET nombre = :nombre, descripcion = :descripcion WHERE id = :id AND estado = 'activo'";
+    $query = "UPDATE Categorias_JRYF SET nombre = :nombre, descripcion = :descripcion WHERE id = :id";
     $stmt = $db->prepare($query);
     $stmt->bindParam(":nombre", $data->nombre);
     $stmt->bindParam(":descripcion", $data->descripcion);
@@ -111,10 +105,10 @@ function actualizarCategoria() {
 
     if ($stmt->execute()) {
         http_response_code(200);
-        echo json_encode(array("mensaje" => "Categoria actualizada."));
+        echo json_encode(array("mensaje" => "Categoría actualizada."));
     } else {
         http_response_code(500);
-        echo json_encode(array("mensaje" => "No se pudo actualizar la categoria."));
+        echo json_encode(array("mensaje" => "No se pudo actualizar la categoría."));
     }
 }
 
@@ -124,7 +118,7 @@ function inactivarCategoria() {
 
     if (empty($data->id)) {
         http_response_code(400);
-        echo json_encode(array("mensaje" => "Falta el ID para inactivar el producto."));
+        echo json_encode(array("mensaje" => "Falta el ID para inactivar la categoría."));
         return;
     }
 
@@ -134,10 +128,10 @@ function inactivarCategoria() {
 
     if ($stmt->execute()) {
         http_response_code(200);
-        echo json_encode(array("mensaje" => "Categoria inactivada."));
+        echo json_encode(array("mensaje" => "Categoría inactivada."));
     } else {
         http_response_code(500);
-        echo json_encode(array("mensaje" => "No se pudo inactivar la categoria."));
+        echo json_encode(array("mensaje" => "No se pudo inactivar la categoría."));
     }
 }
 
@@ -147,7 +141,7 @@ function activarCategoria() {
 
     if (empty($data->id)) {
         http_response_code(400);
-        echo json_encode(array("mensaje" => "Falta el ID para activar la categoria."));
+        echo json_encode(array("mensaje" => "Falta el ID para activar la categoría."));
         return;
     }
 
@@ -157,10 +151,10 @@ function activarCategoria() {
 
     if ($stmt->execute()) {
         http_response_code(200);
-        echo json_encode(array("mensaje" => "Categoria activada."));
+        echo json_encode(array("mensaje" => "Categoría activada."));
     } else {
         http_response_code(500);
-        echo json_encode(array("mensaje" => "No se pudo activar la categoria."));
+        echo json_encode(array("mensaje" => "No se pudo activar la categoría."));
     }
 }
 ?>

@@ -2,7 +2,7 @@
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE, PATCH, OPTIONS");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
@@ -34,7 +34,7 @@ switch ($request_method) {
         break;
     default:
         http_response_code(400);
-        echo json_encode(array("mensaje" => "Método inválido"));
+        echo json_encode(array("mensaje" => "MÃ©todo invÃ¡lido"));
         break;
 }
 
@@ -51,19 +51,14 @@ function obtenerUsuarios() {
 
 function obtenerUsuario($id) {
     global $db;
-    $query = "SELECT * FROM Usuarios_JRYF WHERE id = ? AND estado = 'activo'";
+    $query = "SELECT * FROM Usuarios_JRYF WHERE id = ?";
     $stmt = $db->prepare($query);
     $stmt->bindParam(1, $id);
     $stmt->execute();
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $query = "SELECT estado FROM Usuarios_JRYF WHERE id = ?";
-    $stmt = $db->prepare($query);
-    $stmt->bindParam(1, $id);
-    $stmt->execute();
-    $estado = $stmt->fetchColumn();
     
-    if($estado == "activo"){
+    if($item){
         echo json_encode($item);
     }
     else{
@@ -83,12 +78,24 @@ function crearUsuario() {
         return;
     }
 
+    // Verificar si el correo ya existe
+    $query = "SELECT * FROM Usuarios_JRYF WHERE email = :email";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(":email", $data->email);
+    $stmt->execute();
+    if ($stmt->rowCount() > 0) {
+        http_response_code(400);
+        echo json_encode(array("mensaje" => "El correo electrónico ya está en uso."));
+        return;
+    }
+
     // Inserta el usuario con estado 'activo'
     $query = "INSERT INTO Usuarios_JRYF (nombre, email, password, estado) VALUES (:nombre, :email, :password, 'activo')";
     $stmt = $db->prepare($query);
     $stmt->bindParam(":nombre", $data->nombre);
     $stmt->bindParam(":email", $data->email);
-    $stmt->bindParam(":password", password_hash($data->password, PASSWORD_BCRYPT));
+    $hashed_password = password_hash($data->password, PASSWORD_BCRYPT);
+    $stmt->bindParam(":password", $hashed_password);
 
     if ($stmt->execute()) {
         http_response_code(200);

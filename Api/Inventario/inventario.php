@@ -2,7 +2,7 @@
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE, PATCH, OPTIONS");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
@@ -49,23 +49,17 @@ function obtenerInventarios() {
 
 function obtenerInventario($id) {
     global $db;
-    $query = "SELECT * FROM Inventario_JRYF WHERE id = ? AND estado = 'disponible'";
+    $query = "SELECT * FROM Inventario_JRYF WHERE id = ?";
     $stmt = $db->prepare($query);
     $stmt->bindParam(1, $id);
     $stmt->execute();
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    $query = "SELECT estado FROM Inventario_JRYF WHERE id = ?";
-    $stmt = $db->prepare($query);
-    $stmt->bindParam(1, $id);
-    $stmt->execute();
-    $estado = $stmt->fetchColumn();
-    
-    if($estado == "disponible"){
+
+    if($item) {
         echo json_encode($item);
-    }
-    else{
-        echo ("El inventario no existe");
+    } else {
+        http_response_code(404);
+        echo json_encode(array("mensaje" => "El inventario no existe"));
     }
 }
 
@@ -75,11 +69,11 @@ function crearInventario() {
 
     if (empty($data->idProducto) || empty($data->cantidad) || empty($data->fechaRegistro) || empty($data->idUsuario)) {
         http_response_code(400);
-        echo json_encode(array("mensaje" => "Faltan datos para crear el producto."));
+        echo json_encode(array("mensaje" => "Faltan datos para crear el inventario."));
         return;
     }
 
-    $query = "INSERT INTO Inventario_JRYF (idProducto, cantidad, fechaRegistro, idUsuario , estado) VALUES (:idProducto, :cantidad, :fechaRegistro, :idUsuario, 'disponible')";
+    $query = "INSERT INTO Inventario_JRYF (idProducto, cantidad, fechaRegistro, idUsuario, estado) VALUES (:idProducto, :cantidad, :fechaRegistro, :idUsuario, 'disponible')";
     $stmt = $db->prepare($query);
     $stmt->bindParam(":idProducto", $data->idProducto);
     $stmt->bindParam(":cantidad", $data->cantidad);
@@ -91,7 +85,7 @@ function crearInventario() {
         echo json_encode(array("mensaje" => "Inventario creado."));
     } else {
         http_response_code(500);
-        echo json_encode(array("mensaje" => "No se pudo crear el Inventario."));
+        echo json_encode(array("mensaje" => "No se pudo crear el inventario."));
     }
 }
 
@@ -101,11 +95,11 @@ function actualizarInventario() {
 
     if (empty($data->id) || empty($data->idProducto) || empty($data->cantidad) || empty($data->fechaRegistro) || empty($data->idUsuario)) {
         http_response_code(400);
-        echo json_encode(array("mensaje" => "Faltan datos para actualizar el Inventario."));
+        echo json_encode(array("mensaje" => "Faltan datos para actualizar el inventario."));
         return;
     }
 
-    $query = "UPDATE Inventario_JRYF SET idProducto = :idProducto, cantidad = :cantidad, fechaRegistro = :fechaRegistro, idUsuario = :idUsuario WHERE id = :id AND estado = 'disponible'";
+    $query = "UPDATE Inventario_JRYF SET idProducto = :idProducto, cantidad = :cantidad, fechaRegistro = :fechaRegistro, idUsuario = :idUsuario WHERE id = :id";
     $stmt = $db->prepare($query);
     $stmt->bindParam(":idProducto", $data->idProducto);
     $stmt->bindParam(":cantidad", $data->cantidad);
@@ -118,7 +112,7 @@ function actualizarInventario() {
         echo json_encode(array("mensaje" => "Inventario actualizado."));
     } else {
         http_response_code(500);
-        echo json_encode(array("mensaje" => "No se pudo actualizar el Inventario."));
+        echo json_encode(array("mensaje" => "No se pudo actualizar el inventario."));
     }
 }
 
@@ -128,7 +122,7 @@ function inactivarInventario() {
 
     if (empty($data->id)) {
         http_response_code(400);
-        echo json_encode(array("mensaje" => "Falta el ID para inactivar el Inventario."));
+        echo json_encode(array("mensaje" => "Falta el ID para inactivar el inventario."));
         return;
     }
 
@@ -138,10 +132,10 @@ function inactivarInventario() {
 
     if ($stmt->execute()) {
         http_response_code(200);
-        echo json_encode(array("mensaje" => "Producto inactivado."));
+        echo json_encode(array("mensaje" => "Inventario inactivado."));
     } else {
         http_response_code(500);
-        echo json_encode(array("mensaje" => "No se pudo inactivar el Inventario."));
+        echo json_encode(array("mensaje" => "No se pudo inactivar el inventario."));
     }
 }
 
@@ -151,7 +145,7 @@ function activarInventario() {
 
     if (empty($data->id)) {
         http_response_code(400);
-        echo json_encode(array("mensaje" => "Falta el ID para activar el Inventario."));
+        echo json_encode(array("mensaje" => "Falta el ID para activar el inventario."));
         return;
     }
 
@@ -164,7 +158,7 @@ function activarInventario() {
         echo json_encode(array("mensaje" => "Inventario activado."));
     } else {
         http_response_code(500);
-        echo json_encode(array("mensaje" => "No se pudo activar el Inventario."));
+        echo json_encode(array("mensaje" => "No se pudo activar el inventario."));
     }
 }
 ?>

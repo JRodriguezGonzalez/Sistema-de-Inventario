@@ -2,7 +2,7 @@
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE, PATCH, OPTIONS");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
@@ -49,23 +49,17 @@ function obtenerProductos() {
 
 function obtenerProducto($id) {
     global $db;
-    $query = "SELECT * FROM Productos_JRYF WHERE id = ? AND estado = 'disponible'";
+    $query = "SELECT * FROM Productos_JRYF WHERE id = ?";
     $stmt = $db->prepare($query);
     $stmt->bindParam(1, $id);
     $stmt->execute();
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    $query = "SELECT estado FROM Productos_JRYF WHERE id = ?";
-    $stmt = $db->prepare($query);
-    $stmt->bindParam(1, $id);
-    $stmt->execute();
-    $estado = $stmt->fetchColumn();
-    
-    if($estado == "activo"){
+
+    if($item) {
         echo json_encode($item);
-    }
-    else{
-        echo ("El producto no existe");
+    } else {
+        http_response_code(404);
+        echo json_encode(array("mensaje" => "El producto no existe"));
     }
 }
 
@@ -73,7 +67,7 @@ function crearProducto() {
     global $db;
     $data = json_decode(file_get_contents("php://input"));
 
-    if (empty($data->nombre) || empty($data->descripcion) || empty($data->precio) || empty($data->idCategoria)) {
+    if (empty($data->nombre) || empty($data->descripcion) || empty($data->precio) || empty($data->idCategoria) || empty($data->proveedor_id)) {
         http_response_code(400);
         echo json_encode(array("mensaje" => "Faltan datos para crear el producto."));
         return;
@@ -100,13 +94,13 @@ function actualizarProducto() {
     global $db;
     $data = json_decode(file_get_contents("php://input"));
 
-    if (empty($data->id) || empty($data->nombre) || empty($data->descripcion) || empty($data->precio) || empty($data->idCategoria)) {
+    if (empty($data->id) || empty($data->nombre) || empty($data->descripcion) || empty($data->precio) || empty($data->idCategoria) || empty($data->proveedor_id)) {
         http_response_code(400);
         echo json_encode(array("mensaje" => "Faltan datos para actualizar el producto."));
         return;
     }
 
-    $query = "UPDATE Productos_JRYF SET nombre = :nombre, descripcion = :descripcion, precio = :precio, idCategoria = :idCategoria, proveedor_id = :proveedor_id WHERE id = :id AND estado = 'disponible'";
+    $query = "UPDATE Productos_JRYF SET nombre = :nombre, descripcion = :descripcion, precio = :precio, idCategoria = :idCategoria, proveedor_id = :proveedor_id WHERE id = :id";
     $stmt = $db->prepare($query);
     $stmt->bindParam(":nombre", $data->nombre);
     $stmt->bindParam(":descripcion", $data->descripcion);
