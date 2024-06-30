@@ -1,0 +1,32 @@
+/* src/styles/homeStyle.css */
+.container {
+    text-align: center;
+  }
+  
+  .img-fluid {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .card {
+    margin: 1rem 0;
+  }
+  
+  .card-title {
+    font-weight: bold;
+  }
+  
+  .card-text {
+    font-size: 1rem;
+  }
+  
+  .button {
+    margin-top: 1rem;
+  }
+  
+  /* Nuevos estilos para ajustar el tamaño de las imágenes */
+  .card-img-top {
+    height: 200px; /* Ajusta esta altura según sea necesario */
+    object-fit: cover;
+  }
+  

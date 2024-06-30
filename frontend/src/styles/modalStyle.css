@@ -1,0 +1,43 @@
+/* src/styles/modalStyle.css */
+
+/* Estilos para el modal */
+.modal-content {
+    background-color: var(--color1);
+    color: var(--color-black);
+    border-radius: 10px;
+    border: none;
+}
+
+.modal-header {
+    border-bottom: none;
+    background-color: var(--color6);
+    color: var(--color-white);
+}
+
+.modal-title {
+    font-weight: bold;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    border-top: none;
+    background-color: var(--color6);
+    display: flex;
+    justify-content: center;
+}
+
+.modal-button {
+    background-color: var(--color2);
+    color: var(--color-white);
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+}
+
+.modal-button:hover {
+    background-color: var(--color3);
+}

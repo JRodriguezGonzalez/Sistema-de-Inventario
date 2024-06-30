@@ -34,7 +34,7 @@ switch ($request_method) {
         break;
     default:
         http_response_code(400);
-        echo json_encode(array("mensaje" => "Método inválido"));
+        echo json_encode(array("mensaje" => "MÃ©todo invÃ¡lido"));
         break;
 }
 
@@ -126,6 +126,8 @@ function inactivarProveedor() {
     global $db;
     $data = json_decode(file_get_contents("php://input"));
 
+    error_log("Datos recibidos para inactivar: " . print_r($data, true));
+
     if (empty($data->id)) {
         http_response_code(400);
         echo json_encode(array("mensaje" => "Falta el ID para inactivar el proveedor."));
@@ -148,6 +150,8 @@ function inactivarProveedor() {
 function activarProveedor() {
     global $db;
     $data = json_decode(file_get_contents("php://input"));
+
+    error_log("Datos recibidos para activar: " . print_r($data, true));
 
     if (empty($data->id)) {
         http_response_code(400);

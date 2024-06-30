@@ -1,0 +1,36 @@
+/* src/styles/navbarStyle.css */
+
+/* Estilos para la barra de navegación */
+.navbar-custom {
+    background-color: var(--color1);
+    border-bottom: 2px solid var(--color2);
+}
+
+.navbar-brand {
+    color: var(--color6) !important;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link {
+    color: var(--color4) !important;
+    font-weight: bold;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--color3) !important;
+}
+
+.navbar-toggler {
+    border: none;
+    background-color: var(--color6);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%28255, 255, 255, 1%29' stroke-width='2' linecap='round' linejoin='round' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+.navbar-collapse {
+    justify-content: center;
+}

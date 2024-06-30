@@ -1,0 +1,130 @@
+/* src/styles/pagesStyle.css */
+
+/* Colores */
+:root {
+    --color1: #D3E0F0;
+    --color2: #B09C76;
+    --color3: #EFE3D3;
+    --color4: #5B779B;
+    --color5: #70592F;
+    --color6: #122946;
+    --color-white: #ffffff;
+    --color-black: #000000;
+}
+
+/* Estilos Generales */
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--color1);
+    color: var(--color-black);
+}
+
+h1 {
+    color: var(--color6);
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+button, .btn {
+    margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button.agregar {
+    background-color: var(--color4);
+    color: var(--color-white);
+}
+
+button.agregar:hover {
+    background-color: var(--color5);
+}
+
+button.buscar, button.mostrar-todos {
+    background-color: var(--color2);
+    color: var(--color-white);
+}
+
+button.buscar:hover, button.mostrar-todos:hover {
+    background-color: var(--color3);
+}
+
+button.editar {
+    background-color: var(--color2);
+    color: var(--color-white);
+}
+
+button.editar:hover {
+    background-color: var(--color3);
+}
+
+button.eliminar {
+    background-color: var(--color6);
+    color: var(--color-white);
+}
+
+button.eliminar:hover {
+    background-color: var(--color5);
+}
+
+button.activar {
+    background-color: var(--color4);
+    color: var(--color-white);
+}
+
+button.activar:hover {
+    background-color: var(--color3);
+}
+
+/* Estilos para DataTable */
+.table-container {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.table th, .table td {
+    padding: 15px;
+    text-align: left;
+    border: 1px solid var(--color3);
+}
+
+.table th {
+    background-color: var(--color2);
+    color: var(--color-white);
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: var(--color1);
+}
+
+.table tbody tr:hover {
+    background-color: var(--color3);
+}
+
+.table .acciones button {
+    margin-right: 5px;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.buscar-input {
+    padding: 10px;
+    margin: 0 10px;
+    border: 1px solid var(--color2);
+    border-radius: 5px;
+}
